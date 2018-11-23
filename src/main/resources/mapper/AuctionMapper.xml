@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <!-- namesapce的值是dao接口的全限定名 -->
+<mapper namespace="com.baizhi.dao.AuctionDao">
+	<resultMap type="com.baizhi.entity.Auction" id="auctionMap">
+		<id column="auction_id" property="id"/>
+		<result column="auction_name" property="name"/>
+		<result column="auction_start_price" property="start_price"/>
+		<result column="auction_upset" property="upset"/>
+		<result column="auction_start_time" property="start_time"/>
+		<result column="auction_end_time" property="end_time"/>
+		<result column="auction_pic" property="pic"/>
+		<result column="auction_desc" property="desc"/>
+	</resultMap>
+	
+	<insert id="insert">
+		insert into auction values (a_seq.nextval,
+		#{name},#{start_price},#{upset},
+		#{start_time},#{end_time},#{pic},#{desc})
+	</insert>
+	
+	<delete id="deleteByRe">
+		delete from auction_record where auction_id=#{id}
+	</delete>
+	
+	<delete id="delete">
+		delete from auction where auction_id=#{id}
+	</delete>
+	
+	<update id="update">
+		update auction <set>
+		auction_name=#{name},
+		auction_start_price=#{start_price},
+		auction_upset=#{upset},auction_start_time=#{start_time},
+		auction_end_time=#{end_time},auction_desc=#{desc},
+		<if test="pic!=null">auction_pic=#{pic}</if>
+		</set>
+		where auction_id=#{id}
+	</update>
+	
+	<select id="getOne" resultMap="auctionMap">
+		select * from auction where auction_id=#{id}
+	</select>
+	
+	<select id="getAll" resultMap="auctionMap">
+		select * from auction
+		<where>
+			<if test="name!=null and name!=''">
+				and auction_name like #{name}
+			</if>
+			<if test="desc!=null and desc!=''">
+				and auction_desc like #{desc}
+			</if>
+			<if test="start_time!=null and start_time!=''">
+				and auction_start_time <![CDATA[ >= ]]> #{start_time}
+			</if>
+			<if test="end_time!=null and end_time!=''">
+				and auction_end_time <![CDATA[ <= ]]> #{end_time}
+			</if>
+			<if test="upset!=null and upset!=''">
+				and auction_upset <![CDATA[ >= ]]> #{upset}
+			</if>
+		</where>
+	</select>
+</mapper>
